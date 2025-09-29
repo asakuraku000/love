@@ -1,0 +1,1442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For You ❤️</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Dancing Script', cursive;
+            background: url(images/bg.jpg) no-repeat center center fixed;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Floating hearts background */
+        .hearts-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .heart-float {
+            position: absolute;
+            color: rgba(255, 182, 193, 0.4);
+            animation: floatUp 8s linear infinite;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Password Screen */
+        .password-screen {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            border: 3px solid rgba(255, 182, 193, 0.4);
+            position: relative;
+            transition: all 0.5s ease;
+        }
+
+        .password-screen.hide {
+            opacity: 0;
+            transform: scale(0.8);
+            pointer-events: none;
+        }
+
+        .password-screen h1 {
+            color: #c44569;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            animation: pulseTitle 2s ease-in-out infinite;
+        }
+
+        @keyframes pulseTitle {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            }
+            50% {
+                transform: scale(1.05);
+                text-shadow: 3px 3px 8px rgba(196, 69, 105, 0.4);
+            }
+        }
+
+        .password-screen .subtitle {
+            color: #786fa6;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0c3fc;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            text-align: center;
+            font-family: 'Dancing Script', cursive;
+            background: rgba(255, 255, 255, 0.9);
+            transition: all 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .password-input:focus {
+            outline: none;
+            border-color: #ff6b9d;
+            box-shadow: 0 0 15px rgba(255, 107, 157, 0.3);
+        }
+
+        .enter-btn {
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            padding: 15px 50px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-family: 'Dancing Script', cursive;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(196, 69, 105, 0.4);
+        }
+
+        .enter-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(196, 69, 105, 0.6);
+        }
+
+        .error-msg {
+            color: #c44569;
+            margin-top: 15px;
+            font-size: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-msg.show {
+            opacity: 1;
+        }
+
+        /* Cards Screen */
+        .cards-screen {
+            display: none;
+            position: relative;
+            max-width: 600px;
+            width: 90%;
+        }
+
+        .cards-screen.show {
+            display: block;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 50px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            border: 3px solid rgba(255, 182, 193, 0.4);
+            text-align: center;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            opacity: 0;
+            transform: rotateY(90deg) scale(0.8);
+            pointer-events: none;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .card.active {
+            opacity: 1;
+            transform: rotateY(0deg) scale(1);
+            pointer-events: all;
+            position: relative;
+        }
+
+        .card.exit {
+            opacity: 0;
+            transform: rotateY(-90deg) scale(0.8);
+        }
+
+        .card-number {
+            color: #786fa6;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            opacity: 0.8;
+        }
+
+        .card h2 {
+            color: #c44569;
+            font-size: 2.5rem;
+            margin-bottom: 25px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-content {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            min-height: 150px;
+        }
+
+        .heart-divider {
+            color: #ff6b9d;
+            font-size: 2rem;
+            margin: 20px 0;
+        }
+
+        .next-btn {
+            background: linear-gradient(45deg, #ff6b9d, #c44569);
+            color: white;
+            border: none;
+            padding: 15px 45px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-family: 'Dancing Script', cursive;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(196, 69, 105, 0.4);
+        }
+
+        .next-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(196, 69, 105, 0.6);
+        }
+
+        .final-message {
+            font-size: 1.1rem;
+            color: #786fa6;
+            font-style: italic;
+            margin-top: 20px;
+        }
+
+        /* Album Grid Inside Card */
+        .album-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0 30px 0;
+            position: relative;
+            z-index: 2;
+        }
+
+        .grid-album {
+            opacity: 0;
+            transform: scale(0.5) rotate(0deg);
+            animation: popIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .grid-album:nth-child(1) { animation-delay: 0.1s; }
+        .grid-album:nth-child(2) { animation-delay: 0.2s; }
+        .grid-album:nth-child(3) { animation-delay: 0.3s; }
+        .grid-album:nth-child(4) { animation-delay: 0.4s; }
+        .grid-album:nth-child(5) { animation-delay: 0.5s; }
+        .grid-album:nth-child(6) { animation-delay: 0.6s; }
+        .grid-album:nth-child(7) { animation-delay: 0.7s; }
+        .grid-album:nth-child(8) { animation-delay: 0.8s; }
+        .grid-album:nth-child(9) { animation-delay: 0.9s; }
+        .grid-album:nth-child(10) { animation-delay: 1.0s; }
+
+        @keyframes popIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5) rotate(-180deg);
+            }
+            60% {
+                transform: scale(1.1) rotate(10deg);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1) rotate(0deg);
+            }
+        }
+
+        .grid-album img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 1;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 2px solid rgba(255, 182, 193, 0.5);
+            transition: transform 0.3s ease;
+        }
+
+        .grid-album img:hover {
+            transform: scale(1.05) rotate(3deg);
+        }
+
+        .grid-album p {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: #786fa6;
+            text-align: center;
+        }
+
+        @media (max-width: 480px) {
+            .album-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+        }
+
+        /* Album Covers Outside Card 1 */
+        .album-covers {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .album-covers.show-albums {
+            opacity: 1;
+        }
+
+        .album-cover {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 3px solid rgba(255, 255, 255, 0.9);
+            opacity: 0;
+            transform: scale(0) rotate(0deg);
+            animation: albumSwing 8s ease-in-out infinite;
+            transform-origin: top center;
+        }
+
+        .album-text {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .album-1 {
+            top: 8%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .album-2 {
+            top: 12%;
+            right: 8%;
+            animation-delay: 1s;
+        }
+
+        .album-3 {
+            top: 45%;
+            left: 3%;
+            animation-delay: 2s;
+        }
+
+        .album-4 {
+            bottom: 15%;
+            left: 8%;
+            animation-delay: 3s;
+        }
+
+        .album-5 {
+            bottom: 12%;
+            right: 6%;
+            animation-delay: 4s;
+        }
+
+        .album-6 {
+            top: 35%;
+            right: 5%;
+            animation-delay: 5s;
+        }
+
+        .album-7 {
+            bottom: 40%;
+            left: 10%;
+            animation-delay: 6s;
+        }
+
+        .album-8 {
+            top: 55%;
+            right: 10%;
+            animation-delay: 7s;
+        }
+
+        @keyframes albumSwing {
+            0%, 100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+            10% {
+                opacity: 1;
+                transform: scale(1) rotate(-12deg);
+            }
+            15% {
+                transform: scale(1) rotate(12deg);
+            }
+            20% {
+                transform: scale(1) rotate(-8deg);
+            }
+            25% {
+                transform: scale(1) rotate(5deg);
+            }
+            30%, 70% {
+                transform: scale(1) rotate(0deg);
+                opacity: 1;
+            }
+            75% {
+                transform: scale(1) rotate(-5deg);
+            }
+            80% {
+                transform: scale(1) rotate(8deg);
+            }
+            85% {
+                transform: scale(1) rotate(-12deg);
+            }
+            90%, 100% {
+                opacity: 0;
+                transform: scale(0) rotate(0deg);
+            }
+        }
+
+        /* Gathered state - albums move to center */
+        .album-covers.gathered .album-cover {
+            animation: none !important;
+            opacity: 1 !important;
+            transition: all 1.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            top: 50% !important;
+            left: 50% !important;
+            width: 180px !important;
+            height: 180px !important;
+        }
+
+        /* 3D Carousel State */
+        .album-covers.carousel {
+            perspective: 1200px;
+            perspective-origin: center center;
+            transform-style: preserve-3d;
+        }
+
+        .album-covers.carousel .album-cover {
+            animation: none !important;
+            opacity: 1 !important;
+            transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            transform-style: preserve-3d;
+            width: 180px !important;
+            height: 180px !important;
+            animation-play-state: running !important;
+        }
+
+        /* Position albums in 3D circle centered on screen */
+        .album-covers.carousel .album-1 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum1 20s linear infinite !important;
+        }
+
+        .album-covers.carousel .album-2 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum2 20s linear infinite !important;
+        }
+
+        .album-covers.carousel .album-3 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum3 20s linear infinite !important;
+        }
+
+        .album-covers.carousel .album-4 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum4 20s linear infinite !important;
+        }
+
+        .album-covers.carousel .album-5 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum5 20s linear infinite !important;
+        }
+
+        .album-covers.carousel .album-6 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum6 20s linear infinite !important;
+        }
+
+        .album-covers.carousel .album-7 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum7 20s linear infinite !important;
+        }
+
+        .album-covers.carousel .album-8 {
+            top: 50% !important;
+            left: 50% !important;
+            animation: rotateAlbum8 20s linear infinite !important;
+        }
+
+        /* Carousel rotation wrapper */
+        .album-covers.carousel::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            transform-style: preserve-3d;
+        }
+
+        /* Individual rotation animations for each album */
+        @keyframes rotateAlbum1 {
+            0% { transform: translate(-50%, -50%) rotateY(0deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(360deg) translateZ(400px); }
+        }
+        @keyframes rotateAlbum2 {
+            0% { transform: translate(-50%, -50%) rotateY(45deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(405deg) translateZ(400px); }
+        }
+        @keyframes rotateAlbum3 {
+            0% { transform: translate(-50%, -50%) rotateY(90deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(450deg) translateZ(400px); }
+        }
+        @keyframes rotateAlbum4 {
+            0% { transform: translate(-50%, -50%) rotateY(135deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(495deg) translateZ(400px); }
+        }
+        @keyframes rotateAlbum5 {
+            0% { transform: translate(-50%, -50%) rotateY(180deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(540deg) translateZ(400px); }
+        }
+        @keyframes rotateAlbum6 {
+            0% { transform: translate(-50%, -50%) rotateY(225deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(585deg) translateZ(400px); }
+        }
+        @keyframes rotateAlbum7 {
+            0% { transform: translate(-50%, -50%) rotateY(270deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(630deg) translateZ(400px); }
+        }
+        @keyframes rotateAlbum8 {
+            0% { transform: translate(-50%, -50%) rotateY(315deg) translateZ(400px); }
+            100% { transform: translate(-50%, -50%) rotateY(675deg) translateZ(400px); }
+        }
+
+        /* Ensure cards are above albums */
+        .cards-screen {
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (max-width: 480px) {
+            .album-cover {
+                width: 100px;
+                height: 100px;
+            }
+        }
+
+        /* Envelope Styles */
+        .envelope-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .envelope-container.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            transform: scale(0);
+            animation: envelopeAppear 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        @keyframes envelopeAppear {
+            to {
+                transform: scale(1);
+            }
+        }
+
+        .envelope {
+            position: relative;
+            width: 320px;
+            height: 220px;
+            cursor: pointer;
+        }
+
+        /* Envelope body */
+        .envelope-body {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ff6b9d, #c44569);
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        /* Envelope flap - triangle that opens */
+        .envelope-flap {
+            position: absolute;
+            width: 0;
+            height: 0;
+            top: 0;
+            left: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-top: 130px solid #ff8fb3;
+            transform-origin: top center;
+            transition: transform 1s ease;
+            z-index: 3;
+        }
+
+        .envelope.open .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        /* Envelope cover - the front part */
+        .envelope-cover {
+            position: absolute;
+            width: 0;
+            height: 0;
+            bottom: 0;
+            left: 0;
+            border-left: 160px solid transparent;
+            border-right: 160px solid transparent;
+            border-bottom: 130px solid #ff6b9d;
+            z-index: 2;
+        }
+
+        /* Letter inside */
+        .envelope-letter {
+            position: absolute;
+            width: 280px;
+            height: 200px;
+            background: #fff;
+            top: 20px;
+            left: 20px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            padding: 40px 20px;
+            text-align: center;
+            transform: translateY(0);
+            transition: transform 1s ease 0.3s;
+            z-index: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Dancing Script', cursive;
+        }
+
+        .envelope.open .envelope-letter {
+            transform: translateY(-150px);
+            z-index: 4;
+        }
+
+        .letter-content {
+            opacity: 0;
+            transition: opacity 0.8s ease 1.2s;
+        }
+
+        .envelope.open .letter-content {
+            opacity: 1;
+        }
+
+        .letter-content h3 {
+            color: #c44569;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .letter-content p {
+            color: #2c3e50;
+            font-size: 2rem;
+            font-weight: 600;
+            line-height: 1.5;
+        }
+
+        /* Heart seal on envelope */
+        .envelope-seal {
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            z-index: 5;
+            animation: heartBeat 1.5s ease infinite;
+            transition: opacity 0.3s ease;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.15);
+            }
+        }
+
+        .envelope.open .envelope-seal {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Click hint */
+        .click-hint {
+            position: absolute;
+            bottom: -60px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 1.2rem;
+            animation: fadeInOut 2s ease infinite;
+            white-space: nowrap;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .envelope.open ~ .click-hint {
+            display: none;
+        }
+
+        /* Continue button */
+        .continue-btn {
+            position: absolute;
+            bottom: -120px;
+            left: 50%;
+            transform: translateX(-50%);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease 1.5s, transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .continue-btn:hover {
+            transform: translateX(-50%) translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 35px rgba(196, 69, 105, 0.7);
+        }
+
+        .envelope.open ~ .continue-btn {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        /* Final animation screen */
+        .final-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url(images/bg.jpg) no-repeat center center fixed;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.8s ease;
+        }
+
+        .final-animation.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .love-message {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4rem;
+            color: white;
+            text-align: center;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            animation: pulseLove 2s ease-in-out infinite;
+            z-index: 2001;
+            padding: 0 30px;
+        }
+
+        @keyframes pulseLove {
+            0%, 100% {
+                transform: scale(1);
+                text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+            }
+            50% {
+                transform: scale(1.1);
+                text-shadow: 5px 5px 15px rgba(255, 107, 157, 0.6);
+            }
+        }
+
+        /* Flying photos */
+        .flying-photos {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2000;
+            overflow: hidden;
+        }
+
+        .flying-photo {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            border: 3px solid white;
+            opacity: 0;
+            animation: floatUpLikeBalloon 12s ease-in infinite;
+            left: 0;
+            bottom: -150px;
+        }
+
+        @keyframes floatUpLikeBalloon {
+            0% {
+                opacity: 0;
+                transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+            }
+            5% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-50vh) translateX(30px) rotate(15deg) scale(1.1);
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-120vh) translateX(-20px) rotate(-10deg) scale(0.9);
+            }
+        }
+
+        /* Different horizontal positions and delays */
+        .flying-photo:nth-child(1) { 
+            left: 5%; 
+            animation-delay: 0s; 
+            animation-duration: 10s;
+        }
+        .flying-photo:nth-child(2) { 
+            left: 15%; 
+            animation-delay: 1.5s; 
+            animation-duration: 12s;
+        }
+        .flying-photo:nth-child(3) { 
+            left: 25%; 
+            animation-delay: 3s; 
+            animation-duration: 11s;
+        }
+        .flying-photo:nth-child(4) { 
+            left: 35%; 
+            animation-delay: 4.5s; 
+            animation-duration: 13s;
+        }
+        .flying-photo:nth-child(5) { 
+            left: 45%; 
+            animation-delay: 6s; 
+            animation-duration: 10s;
+        }
+        .flying-photo:nth-child(6) { 
+            left: 55%; 
+            animation-delay: 7.5s; 
+            animation-duration: 12s;
+        }
+        .flying-photo:nth-child(7) { 
+            left: 65%; 
+            animation-delay: 2s; 
+            animation-duration: 11s;
+        }
+        .flying-photo:nth-child(8) { 
+            left: 75%; 
+            animation-delay: 3.5s; 
+            animation-duration: 13s;
+        }
+        .flying-photo:nth-child(9) { 
+            left: 85%; 
+            animation-delay: 5s; 
+            animation-duration: 10s;
+        }
+        .flying-photo:nth-child(10) { 
+            left: 10%; 
+            animation-delay: 8s; 
+            animation-duration: 12s;
+        }
+
+        @media (max-width: 480px) {
+            .love-message {
+                font-size: 2.5rem;
+            }
+
+            .flying-photo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .password-screen, .card {
+                padding: 30px 25px;
+                max-height: 80vh;
+                overflow-y: auto;
+            }
+
+            .password-screen h1, .card h2 {
+                font-size: 2rem;
+            }
+
+            .card-content {
+                font-size: 1.1rem;
+                min-height: 120px;
+            }
+
+            .envelope {
+                width: 280px;
+                height: 190px;
+            }
+
+            .envelope-flap {
+                border-left: 140px solid transparent;
+                border-right: 140px solid transparent;
+                border-top: 110px solid #ff8fb3;
+            }
+
+            .envelope-cover {
+                border-left: 140px solid transparent;
+                border-right: 140px solid transparent;
+                border-bottom: 110px solid #ff6b9d;
+            }
+
+            .envelope-letter {
+                width: 240px;
+                height: 170px;
+                padding: 30px 15px;
+            }
+
+            .letter-content h3 {
+                font-size: 2rem;
+            }
+
+            .letter-content p {
+                font-size: 1.6rem;
+            }
+
+            .envelope-seal {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+	<!-- Floating hearts background -->
+	<div class="hearts-bg" id="heartsBackground"></div>
+
+
+    <!-- Album Covers (shown when card 1 is active) -->
+    <div class="album-covers" id="albumCovers">
+        <div class="album-cover album-1" style="background-image: url('images/img1.jpg'); background-size: cover; background-position: center;">
+        </div>
+        <div class="album-cover album-2" style="background-image: url('images/img2.PNG'); background-size: cover; background-position: center;">
+        </div>
+        <div class="album-cover album-3" style="background-image: url('images/img3.PNG'); background-size: cover; background-position: center;">
+        </div>
+        <div class="album-cover album-4" style="background-image: url('images/img4.JPG'); background-size: cover; background-position: center;">
+        </div>
+        <div class="album-cover album-5" style="background-image: url('images/img5.JPG'); background-size: cover; background-position: center;">
+        </div>
+        <div class="album-cover album-6" style="background-image: url('images/img6.jpg'); background-size: cover; background-position: center;">
+        </div>
+        <div class="album-cover album-7" style="background-image: url('images/img7.jpg'); background-size: cover; background-position: center;">
+        </div>
+        <div class="album-cover album-8" style="background-image: url('images/img8.JPG'); background-size: cover; background-position: center;">
+        </div>
+    </div>
+
+    <!-- Password Screen -->
+    <div class="password-screen" id="passwordScreen">
+        <h1>💝 A Special Message 💝</h1>
+        <p class="subtitle">Enter the password to unlock</p>
+        <input type="text" class="password-input" id="passwordInput" placeholder="Enter password...">
+        <button class="enter-btn" onclick="checkPassword()">Enter ✨</button>
+        <p class="error-msg" id="errorMsg">❌ Incorrect password. Try again!</p>
+    </div>
+
+    <!-- Cards Screen -->
+    <div class="cards-screen" id="cardsScreen">
+        <div class="card active" id="card1">
+            <div class="card-number">Card 1 of 4</div>
+            <h2>🎵 Our Special Songs 🎵</h2>
+            <div class="heart-divider">✨ ❤️ ✨</div>
+            <div class="card-content" data-text="When I hear these songs,<br>I always remember you<br>💕🎧💕">
+            </div>
+            <button class="next-btn" onclick="showAlbums()" style="opacity: 0;">Show Albums →</button>
+        </div>
+
+        <div class="card" id="card1b">
+            <div class="card-number">Albums</div>
+            <h2>💿 Our Playlist 💿</h2>
+            <div class="heart-divider">✨ 🎶 ✨</div>
+            
+            <!-- Album Grid Inside Card -->
+            <div class="album-grid">
+                <div class="grid-album">
+                    <img src="images/album1.png" alt="Album 1">
+                    <p>Wherever You Will Go </p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album2.png" alt="Album 2">
+                    <p>Sunday Morning</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album3.jpg" alt="Album 3">
+                    <p>You and Me</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album4.jpg" alt="Album 4">
+                    <p>Breakeven</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album5.png" alt="Album 5">
+                    <p>Iris</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album6.jpg" alt="Album 6">
+                    <p>Sila</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album7.jpg" alt="Album 7">
+                    <p>I'll Be</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album8.jpg" alt="Album 8">
+                    <p>Balisong</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album9.jpg" alt="Album 9">
+                    <p>Ewan</p>
+                </div>
+                <div class="grid-album">
+                    <img src="images/album10.jpg" alt="Album 10">
+                    <p>The Only Exception</p>
+                </div>
+            </div>
+            
+            <button class="next-btn" onclick="nextCard(2)">Continue →</button>
+        </div>
+
+        <div class="card" id="card2">
+            <div class="card-number">Card 2 of 4</div>
+            <h2>🌹 Second Thought 🌹</h2>
+            <div class="heart-divider">✨ 💕 ✨</div>
+            <div class="card-content" data-text="Your smile brightens my darkest days and fills my heart with endless joy and warmth.">
+            </div>
+            <button class="next-btn" onclick="nextCard(3)" style="opacity: 0;">Continue →</button>
+        </div>
+
+        <div class="card" id="card3">
+            <div class="card-number">Card 3 of 4</div>
+            <h2>💫 Third Thought 💫</h2>
+            <div class="heart-divider">✨ 💗 ✨</div>
+            <div class="card-content" data-text="Being with you has taught me what it truly means to love and be loved unconditionally.">
+            </div>
+            <button class="next-btn" onclick="nextCard(4)" style="opacity: 0;">Continue →</button>
+        </div>
+
+        <div class="card" id="card4">
+            <div class="card-number">Card 4 of 4</div>
+            <h2>🌟 Final Message 🌟</h2>
+            <div class="heart-divider">✨ 💝 ✨</div>
+            <div class="card-content" data-text="You are my yesterday, my today, and all of my tomorrows. Forever and always.">
+            </div>
+            <p class="final-message">💕 With all my love 💕</p>
+            <button class="next-btn" onclick="openEnvelope()" style="margin-top: 20px; opacity: 0;">Open Gift 🎁</button>
+        </div>
+    </div>
+
+    <!-- Envelope Gift -->
+    <div class="envelope-container" id="envelopeContainer">
+        <div class="envelope-wrapper">
+            <div class="envelope" id="envelope" onclick="toggleEnvelope()">
+                <div class="envelope-body"></div>
+                <div class="envelope-letter">
+                    <div class="letter-content">
+                        <h3>💝</h3>
+                        <p>Sinasagot na kita &lt;3</p>
+                    </div>
+                </div>
+                <div class="envelope-cover"></div>
+                <div class="envelope-flap"></div>
+                <div class="envelope-seal">💌</div>
+            </div>
+            <div class="click-hint">Click the envelope to open ✨</div>
+            <button class="next-btn continue-btn" onclick="showFinalAnimation()">Continue 💕</button>
+        </div>
+    </div>
+
+    <!-- Final Animation Screen -->
+    <div class="final-animation" id="finalAnimation">
+        <div class="flying-photos" id="flyingPhotos">
+            <div class="flying-photo" style="background-image: url('images/img1.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img2.PNG'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img3.PNG'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img4.JPG'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img5.JPG'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img6.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img7.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img8.JPG'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img1.jpg'); background-size: cover; background-position: center;"></div>
+                <div class="flying-photo" style="background-image: url('images/img2.PNG'); background-size: cover; background-position: center;"></div>
+        </div>
+        <div class="love-message">
+            I love you so much 💋❤️
+        </div>
+    </div>
+
+    <script>
+        // Set your password here
+        const correctPassword = "110704";
+        
+        // Create floating hearts
+        function createFloatingHearts() {
+            const heartsContainer = document.getElementById('heartsBackground');
+            const hearts = ['❤️', '💕', '💖', '💗', '💝', '💓'];
+            
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.className = 'heart-float';
+                heart.textContent = hearts[Math.floor(Math.random() * hearts.length)];
+                heart.style.left = Math.random() * 100 + '%';
+                heart.style.fontSize = (Math.random() * 1.5 + 1) + 'rem';
+                heart.style.animationDuration = (Math.random() * 4 + 6) + 's';
+                heart.style.animationDelay = Math.random() * 2 + 's';
+                
+                heartsContainer.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 10000);
+            }, 800);
+        }
+
+        createFloatingHearts();
+
+        // Background music on mouse move
+        var audio = document.createElement("AUDIO");
+        document.body.appendChild(audio);
+        audio.src = "bgmusic.mp3";
+        audio.loop = true;
+
+        document.body.addEventListener("mousemove", function () {
+            audio.play();
+        });
+
+        // Check password
+        function checkPassword() {
+            const input = document.getElementById('passwordInput');
+            const errorMsg = document.getElementById('errorMsg');
+            const passwordScreen = document.getElementById('passwordScreen');
+            const cardsScreen = document.getElementById('cardsScreen');
+            
+            if (input.value === correctPassword) {
+                passwordScreen.classList.add('hide');
+                setTimeout(() => {
+                    passwordScreen.style.display = 'none';
+                    cardsScreen.classList.add('show');
+                    // Show album covers for card 1
+                    setTimeout(() => {
+                        document.getElementById('albumCovers').classList.add('show-albums');
+                        // Start typing for card1
+                        setTimeout(() => typeText(document.getElementById('card1')), 500);
+                    }, 500);
+                }, 500);
+            } else {
+                errorMsg.classList.add('show');
+                input.value = '';
+                input.style.borderColor = '#c44569';
+                
+                setTimeout(() => {
+                    errorMsg.classList.remove('show');
+                    input.style.borderColor = '#e0c3fc';
+                }, 2000);
+            }
+        }
+
+        // Handle Enter key
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                checkPassword();
+            }
+        });
+
+        // Typing animation function
+        function typeText(cardElement) {
+            const contentDiv = cardElement.querySelector('.card-content');
+            if (!contentDiv || !contentDiv.hasAttribute('data-text')) return;
+
+            const text = contentDiv.getAttribute('data-text');
+            const button = cardElement.querySelector('.next-btn');
+            let i = 0;
+
+            const interval = setInterval(() => {
+                contentDiv.innerHTML = text.substring(0, i + 1);
+                i++;
+                if (i >= text.length) {
+                    clearInterval(interval);
+                    if (button) {
+                        button.style.opacity = '1';
+                    }
+                }
+            }, 80); // Even slower typing speed
+        }
+
+        // Auto scroll card slowly
+        function autoScrollCard(cardElement) {
+            const scrollHeight = cardElement.scrollHeight;
+            const clientHeight = cardElement.clientHeight;
+            if (scrollHeight > clientHeight) {
+                let scrollTop = 0;
+                const interval = setInterval(() => {
+                    scrollTop += 10; // faster scroll speed
+                    cardElement.scrollTop = scrollTop;
+                    if (scrollTop >= scrollHeight - clientHeight) {
+                        clearInterval(interval);
+                    }
+                }, 100); // adjust timing for smoothness
+            }
+        }
+
+        // Show album card with animation
+        function showAlbums() {
+            const card1 = document.getElementById('card1');
+            const card1b = document.getElementById('card1b');
+
+            // Keep scattered albums visible (don't hide them)
+
+            // Transition to album grid card
+            card1.classList.remove('active');
+            card1.classList.add('exit');
+
+            setTimeout(() => {
+                card1.classList.remove('exit');
+                card1b.classList.add('active');
+                // Start auto scroll after animations
+                setTimeout(() => autoScrollCard(card1b), 2000);
+            }, 400);
+        }
+
+        // Next card animation
+        function nextCard(cardNum) {
+            const currentCard = document.querySelector('.card.active');
+            const nextCard = document.getElementById('card' + cardNum);
+            const albumCovers = document.getElementById('albumCovers');
+
+            // Special handling for gathering animation after card 2
+            if (currentCard.id === 'card2' && cardNum === 3) {
+                handleGatheringTransition();
+                return;
+            }
+
+            // Gather albums when going to card 3 (after 2nd thought card)
+            if (cardNum === 3) {
+                albumCovers.classList.add('gathered');
+            }
+
+            // Scatter albums back when leaving card 3 or when leaving card1b to go to card2
+            if (currentCard.id === 'card3') {
+                albumCovers.classList.remove('gathered');
+            } else if (currentCard.id === 'card1b' && cardNum === 2) {
+                // When leaving the album grid card to go to card 2, ensure albums are scattered
+                albumCovers.classList.remove('gathered');
+            }
+
+            currentCard.classList.remove('active');
+            currentCard.classList.add('exit');
+
+            setTimeout(() => {
+                currentCard.classList.remove('exit');
+                nextCard.classList.add('active');
+                typeText(nextCard);
+            }, 400);
+        }
+
+        // Handle gathering transition after card 2
+        function handleGatheringTransition() {
+            const currentCard = document.querySelector('.card.active');
+            const albumCovers = document.getElementById('albumCovers');
+            const gatheringButton = document.getElementById('gatheringNextBtn');
+
+            // Hide current card
+            currentCard.classList.remove('active');
+            currentCard.classList.add('exit');
+
+            // Start gathering animation
+            albumCovers.classList.add('gathered');
+
+            // After gathering, transition to 3D carousel
+            setTimeout(() => {
+                albumCovers.classList.remove('gathered');
+                albumCovers.classList.add('carousel');
+                showGatheringButton();
+            }, 1400);
+        }
+
+        // Show next button during gathering
+        function showGatheringButton() {
+            const existingBtn = document.getElementById('gatheringNextBtn');
+            if (existingBtn) existingBtn.remove();
+
+            const nextBtn = document.createElement('button');
+            nextBtn.id = 'gatheringNextBtn';
+            nextBtn.className = 'next-btn';
+            nextBtn.textContent = 'Continue →';
+            nextBtn.style.position = 'fixed';
+            nextBtn.style.bottom = '50px';
+            nextBtn.style.left = '50%';
+            nextBtn.style.transform = 'translateX(-50%)';
+            nextBtn.style.zIndex = '10';
+            nextBtn.onclick = function() {
+                proceedToCard3();
+            };
+
+            document.body.appendChild(nextBtn);
+
+            // Fade in the button
+            setTimeout(() => {
+                nextBtn.style.opacity = '1';
+            }, 100);
+        }
+
+        // Proceed to card 3 after gathering
+        function proceedToCard3() {
+            const albumCovers = document.getElementById('albumCovers');
+            const gatheringButton = document.getElementById('gatheringNextBtn');
+            const card3 = document.getElementById('card3');
+
+            // Hide gathering button
+            if (gatheringButton) {
+                gatheringButton.style.opacity = '0';
+                setTimeout(() => gatheringButton.remove(), 300);
+            }
+
+            // Remove carousel and scatter albums back
+            albumCovers.classList.remove('carousel');
+            albumCovers.classList.remove('gathered');
+
+            // Show card 3
+            setTimeout(() => {
+                card3.classList.add('active');
+                typeText(card3);
+            }, 800);
+        }
+
+        // Show album covers when cards screen appears
+        setTimeout(() => {
+            const cardsScreen = document.getElementById('cardsScreen');
+            if (cardsScreen.classList.contains('show')) {
+                document.getElementById('albumCovers').classList.add('show-albums');
+            }
+        }, 500);
+
+        // Open envelope gift
+        function openEnvelope() {
+            const envelopeContainer = document.getElementById('envelopeContainer');
+            envelopeContainer.classList.add('show');
+        }
+
+        // Toggle envelope open/close
+        function toggleEnvelope() {
+            const envelope = document.getElementById('envelope');
+            envelope.classList.toggle('open');
+        }
+
+        // Show final animation
+        function showFinalAnimation() {
+            const envelopeContainer = document.getElementById('envelopeContainer');
+            const finalAnimation = document.getElementById('finalAnimation');
+
+            // Fade out envelope
+            envelopeContainer.style.opacity = '0';
+
+            setTimeout(() => {
+                envelopeContainer.style.display = 'none';
+                finalAnimation.classList.add('show');
+            }, 500);
+        }
+
+        // Play music when page loads (after user interaction)
+        window.onload = function() {
+            // Music will play after password entry
+        }
+    </script>
+</body>
+</html>
